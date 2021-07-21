@@ -1,6 +1,6 @@
 'use strict';
 
-class ProductDTO {
+class Product {
     /**
      * 
      * @param {number} id  уникальный идентификатор

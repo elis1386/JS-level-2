@@ -1,10 +1,10 @@
 'use strict';
 
 const products = [
-    new ProductDTO(0, 'item-1.png', 'Mango People T-shirt', 52.32,),
-    new ProductDTO(1, 'item-2.png', 'Mango People Blazer', 23.04,),
-    new ProductDTO(2, 'item-3.png', 'Mango People Jacket', 52.90,),
-    new ProductDTO(3, 'item-4.png', 'Mango People Dress', 56.54,),
+    new Product(0, 'item-1.png', 'Mango People T-shirt', 52.32,),
+    new Product(1, 'item-2.png', 'Mango People Blazer', 23.04,),
+    new Product(2, 'item-3.png', 'Mango People Jacket', 52.90,),
+    new Product(3, 'item-4.png', 'Mango People Dress', 56.54,),
 ]
 
 
