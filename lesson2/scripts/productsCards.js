@@ -38,6 +38,7 @@ function addProducts(products) {
     const boxProducts = document.querySelector('.box-product');
     boxProducts.innerHTML = productsMarkup;
 }
+totalPrice()
 
 addProducts(products);
 

@@ -1,48 +1,48 @@
-// * Некая сеть фастфуда предлагает несколько видов гамбургеров:
-// Маленький (50 рублей, 20 калорий).
-// Большой (100 рублей, 40 калорий).
-// Гамбургер может быть с одним из нескольких видов начинок (обязательно):
-// С сыром (+10 рублей, +20 калорий).
-// С салатом (+20 рублей, +5 калорий).
-// С картофелем (+15 рублей, +10 калорий).
-// Дополнительно гамбургер можно посыпать приправой (+15 рублей, +0 калорий) и полить майонезом (+20 рублей, +5 калорий).
-
 "use strict";
-const sizeBig = 'big';
-const sizeSmall = 'small';
-const stuffing = [
-    cheese(10, 20)
-]
-
-class Hamburger {
-    constructor() {
-        this.sizes = {
-            'big': 100,
-            'small': 50,
-        };
-        this.size = '';
-        this.stuffing = [];
-        this.topping = [];
+class Param {
+    constructor(elements) {
+        this.price = +element.dataset['price'];
+        this.callories = +element.dataset['callories'];
     }
-    calculatePrice() {
-        let price = this.sizes[this.size];
-        this.stuffing.forEach(element => {
-            this.stuffings[element] + price
-        });
-        return price;
-    }
-    calculateCalories() {
-
-    }
-
 }
 
 
+class Burger {
+    constructor(size, add, topping) {
+        this.size = new Param(this.select(size));
+        this.add = new Param(this.select(add));
+        this.toppings = new Param(this.select(topping));
+    }
+    select(name) {
+        return document.querySelector('input[name="${name}"]:checked');
+    }
 
 
+    getToppings(name) {
+        let result = [];
+        this.selectAll(name).forEach(el => result.push(new Param(el)));
+        return result;
+    }
 
-let humburger = new Hamburger();
-console.log(humburger.calculateCalories());
-console.log(humburger.calculatePrice());
+    selectAll(name) {
+        return document.querySelectorAll('input[name="${name}"]:checked');
+    }
 
+    totalPrice() {
+        let result = this.size.price + this.add.price;
+        this.toppings.forEach(topping => result += topping.price);
+        return result;
 
+    }
+    totalCallories() {
+        let result = this.size.callories + this.add.callories;
+        this.toppings.forEach(topping => result += topping.callories);
+        return result;
+    }
+
+    showSum(price, callories) {
+        document.querySelector(price).textComtent = this.totalPrice();
+        document.querySelector(callories).textComtent = this.totalCallories();
+    }
+}
+showSum()

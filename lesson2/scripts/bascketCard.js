@@ -32,7 +32,9 @@ class Basket {
     /**
     * Методы которые будут пересчитывать сумму товаров и перерисовывать корзину.
     */
-    #updateTotapSum()
+    #updateTotapSum() {
+        this.totalPrice = this.products.reduce((sum, this.product) => { sum + product.price * product.quantity }, 0);
+    }
 
     #render()
 
