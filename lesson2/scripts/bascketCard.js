@@ -3,11 +3,11 @@
 class Basket {
     /**
      * 
-     * @param {Array} this.product  массив товаров
+     * @param {Array} this.products  массив товаров
      * @param {number} totalPrice цена всех товаров
      */
     constructor(totalPrice) {
-        this.product = [];
+        this.products = [];
         this.totalPrice = 0;
         this.container = document.querySelector;
     }
