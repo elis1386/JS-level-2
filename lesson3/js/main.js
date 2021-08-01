@@ -1,5 +1,8 @@
 'use strict';
 
+// Адрес файла с товарами 
+
+const myUrl = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json';
 
 // Класс товара
 
@@ -39,6 +42,25 @@ class Showcase {
     this.prodPlace = prodPlace;
     this.products = [];
   }
+}
+
+// витрина 
+
+const myShowcase = new Showcase(document.querySelector('.products-block'));
+
+
+// Функция для отображения товаров на странице
+
+function showProducts(goods) {
+  let ourHtml = '';
+  let products = [];
+  goods.forEach((good) => {
+    let prod = new Product(good.id_product, good.product_name, good.price);
+    ourHtml += prod.renderHtml();
+    products.push(prod);
+  })
+  myShowcase.prodPlace.innerHTML = ourHtml;
+  return products;
 }
 
 // Класс корзины 
@@ -135,9 +157,6 @@ class ProductInBasket extends Product {
   }
 }
 
-// витрина 
-
-const myShowcase = new Showcase(document.querySelector('.products-block'));
 
 // корзина
 
@@ -150,23 +169,14 @@ const myBasket = new Basket(
   document.querySelector('.no-items'),
   document.querySelector(".basket-list"));
 
-// Убираем некоторые кнопки для начала 
 
-myBasket.removeToCarts();
 
-// Работа кнопки Go Shopping 
+
 
 myBasket.toShop.addEventListener('click', () => myBasket.closeBasket());
 
 
-
-
-// Адрес файла с товарами 
-
-const myUrl = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json';
-
-
-// Запрос с колбэк функцией 
+// Запрос
 
 function makeGETRequest(url) {
   return new Promise((resolve, reject) => {
@@ -192,21 +202,7 @@ function makeGETRequest(url) {
 
 }
 
-// Функция для отображения товаров на странице
-
-function showProducts(goods) {
-  let ourHtml = '';
-  let products = [];
-  goods.forEach((good) => {
-    let prod = new Product(good.id_product, good.product_name, good.price);
-    ourHtml += prod.renderHtml();
-    products.push(prod);
-  })
-  myShowcase.prodPlace.innerHTML = ourHtml;
-  return products;
-}
-
-// Вешаем обработку событий на кнопки
+// Обработчик события на кнопки
 
 function addListeners(products) {
   myShowcase.products = products;
@@ -224,8 +220,6 @@ function addToBasket(e) {
   myBasket.showBasketContent();
 }
 
-
-// Запрос и все остальное
 
 
 makeGETRequest(myUrl)
