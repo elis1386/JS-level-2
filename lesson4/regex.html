@@ -58,7 +58,8 @@
         One: 'Sure.' Bye.'
         `;
 
-        console.log(str.replace(/\B'|'\B/g, '"'));
+        console.log(str.replace(/\B'|'\B/gm, '"'));
+        // (/(^'\b)|\s('\b)|(\b')\s|(\b'$)/gm, '"') // пыталась так, но не сработало
 
 
     </script>
