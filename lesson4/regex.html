@@ -13,7 +13,8 @@
         'use strict';
 
         const str = `
-        One: 'Hi Mary.' Two: 'Oh, hi.'
+        One: 'Hi Mary.' 
+        Two: 'Oh, hi.'
         One: 'How are you doing?'
         Two: 'I'm doing alright. How about you?'
         One: 'Not too bad. The weather is great isn't it?'
@@ -38,7 +39,8 @@
         'use strict';
 
         const str = `
-        One: 'Hi Mary.' Two: 'Oh, hi.'
+        One: 'Hi Mary.' 
+        Two: 'Oh, hi.'
         One: 'How are you doing?'
         Two: 'I'm doing alright. How about you?'
         One: 'Not too bad. The weather is great isn't it?'
@@ -56,7 +58,8 @@
         One: 'Sure.' Bye.'
         `;
 
-        console.log(str.replace(/\b'.+\b.'/gm, '"'));
+        console.log(str.replace(/\B'|'\B/g, '"'));
+
 
     </script>
 </body>
