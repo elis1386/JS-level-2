@@ -39,4 +39,7 @@ function addProducts(products) {
     boxProducts.innerHTML = productsMarkup;
 }
 
+
 addProducts(products);
+
+
