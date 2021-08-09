@@ -1,229 +1,82 @@
-'use strict';
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-// Адрес файла с товарами 
+const app = new Vue({
+  el: '#app',
+  data: {
+    userSearch: '',
+    showCart: false,
+    cartUrl: '/getBasket.json',
+    catalogUrl: '/catalogData.json',
+    products: [],
+    cartItems: [],
+    filtered: [],
+    imgCatalog: 'https://via.placeholder.com/200x150',
+    imgCart: 'https://via.placeholder.com/50x100',
+  },
+  methods: {
+    getJson(url) {
+      return fetch(url)
+        .then(result => result.json())
+        .catch(error => {
+          console.log(error);
+        })
+    },
+    addProduct(product) {
+      this.getJson(`${API}/addToBasket.json`)
+        .then(data => {
+          if (data.result === 1) {
+            let find = this.cartItems.find(el => el.id_product === product.id_product);
+            if (find) {
+              find.quantity++;
+            } else {
+              let prod = Object.assign({quantity: 1}, product);
+              this.cartItems.push(prod)
+            }
+          } else {
+            alert('Error');
+          }
+        })
+    },
+    remove(item) {
+      this.getJson(`${API}/deleteFromBasket.json`)
+        .then(data => {
+          if (data.result === 1) {
+            if (item.quantity > 1) {
+              item.quantity--;
+            } else {
+              this.cartItems.splice(this.cartItems.indexOf(item), 1)
+            }
+          }
+        })
+    },
+    filter() {
+      let regexp = new RegExp(this.userSearch, 'i');
+      this.filtered = this.products.filter(el => regexp.test(el.product_name));
+    },
+  },
+  created(){
 
-const myUrl = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json';
+  },
+  beforeDestroy() {
 
-// Класс товара
+  },
+  beforeUpdate() {
 
-class Product {
-  constructor(id, name, price) {
-    this.id = id;
-    this.name = name;
-    this.price = price;
+  },
+  mounted() {
+    this.getJson(`${API + this.cartUrl}`)
+      .then(data => {
+        for (let el of data.contents) {
+          this.cartItems.push(el);
+        }
+      });
+    this.getJson(`${API + this.catalogUrl}`)
+      .then(data => {
+        for (let el of data) {
+          this.products.push(el);
+          this.filtered.push(el);
+        }
+      });
   }
-
-  renderHtml() {
-    return `
-    <div class="products-block-container" data-id="${this.id}">
-        <a href="#" class="products-block-link">
-            <div class="products-block-item">                           
-                    <img class="product-image" src="images/Preview-icon.png" alt="Product1" class="products-item-image">
-                
-                <div class="products-item-text">
-                    <h3>${this.name}</h3>
-                    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry..</p>
-                    <p class="pprice">$${this.price}</p>
-                </div>
-            </div>
-        </a>
-        <a href="#" class="products-add-button" data-id=${this.id}>
-            <img src="images/basket_white.svg" alt=""> Add to cart
-        </a>                    
-    </div>
-    `;
-  }
-}
-
-// "Витрина" с товарамм
-
-class Showcase {
-  constructor(prodPlace) {
-    this.prodPlace = prodPlace;
-    this.products = [];
-  }
-}
-
-// витрина 
-
-const myShowcase = new Showcase(document.querySelector('.products-block'));
-
-
-// Функция для отображения товаров на странице
-
-function showProducts(goods) {
-  let ourHtml = '';
-  let products = [];
-  goods.forEach((good) => {
-    let prod = new Product(good.id_product, good.product_name, good.price);
-    ourHtml += prod.renderHtml();
-    products.push(prod);
-  })
-  myShowcase.prodPlace.innerHTML = ourHtml;
-  return products;
-}
-
-// Класс корзины 
-
-class Basket {
-  constructor(basketWindow, toCart, checkout, toShop, total, noItems, htmlInBasket) {
-    this.products = [];
-    this.basketWindow = basketWindow;
-    this.total = total;
-    this.toCart = toCart;
-    this.checkout = checkout;
-    this.toShop = toShop;
-    this.noItems = noItems;
-    this.htmlInBasket = htmlInBasket;
-  }
-
-  removeToCarts() {
-    this.checkout.style.display = "none";
-    this.toCart.style.display = "none";
-  }
-
-  addToCards() {
-    this.noItems.innerHTML = '';
-    this.checkout.style.display = "block";
-    this.toCart.style.display = "block";
-  }
-
-  showBasket() {
-    this.basketWindow.style.display = "block";
-    this.noItems.innerHTML = "";
-  }
-
-  closeBasket() {
-    this.basketWindow.style.display = 'none';
-    let that = this;
-    setTimeout(function () {
-      that.basketWindow.style.display = '';
-    }, 10);
-  }
-
-  addProduct(product) {
-    if (this.products.find(x => x.id == product.id)) {
-      let i = this.products.indexOf(this.products.find(x => x.id == product.id));
-      this.products[i].quantity++;
-    } else {
-      let productToB = new ProductInBasket(product.id, product.name, product.price);
-      productToB.quantity++;
-      this.products.push(productToB);
-    }
-
-  }
-
-  takeTotalAmount() {
-    let totalAmount = 0;
-    this.products.forEach((product) => {
-      totalAmount += product.quantity * product.price;
-    })
-    this.total.innerHTML = `Всего заказано на $${totalAmount}`;
-  }
-
-  showBasketContent() {
-    this.addToCards();
-    let innerHtml = '';
-    this.products.forEach((product) => {
-      innerHtml += product.renderHtml();
-    })
-    this.htmlInBasket.innerHTML = innerHtml;
-    this.takeTotalAmount();
-    this.showBasket();
-    let that = this;
-    setTimeout(function () {
-      that.basketWindow.style.display = '';
-    }, 1500);
-  }
-
-}
-
-// Класс товара в корзине
-
-class ProductInBasket extends Product {
-  constructor(id, name, price) {
-    super(id, name, price);
-    this.quantity = 0;
-  }
-
-  renderHtml() {
-    return `<div class="basket-list-item">
-    <img src="images/Preview-icon2.png" alt="Prod">
-    <div class="basket-list-item-text">
-        <h4>${this.name}</h4>
-        <p class="price">${this.quantity}  x   $${this.price} = $${this.quantity * this.price}</p>
-    </div>
-    </div>`
-  }
-}
-
-
-// корзина
-
-const myBasket = new Basket(
-  document.querySelector('.cart-products'),
-  document.querySelector('.btn-cart'),
-  document.querySelector('.btn-checkout'),
-  document.querySelector('.btn-shopping'),
-  document.querySelector('.total'),
-  document.querySelector('.no-items'),
-  document.querySelector(".basket-list"));
-
-
-
-
-
-myBasket.toShop.addEventListener('click', () => myBasket.closeBasket());
-
-
-// Запрос
-
-function makeGETRequest(url) {
-  return new Promise((resolve, reject) => {
-
-    let xhr;
-    if (window.XMLHttpRequest) {
-      xhr = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {
-      xhr = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        let goods = JSON.parse(xhr.responseText);
-        resolve(goods);
-      }
-    }
-
-    xhr.open('GET', url, true);
-    xhr.send();
-
-  })
-
-}
-
-// Обработчик события на кнопки
-
-function addListeners(products) {
-  myShowcase.products = products;
-  let buttons = document.querySelectorAll('.products-add-button');
-  buttons.forEach((button) => {
-    button.addEventListener('click', addToBasket);
-  })
-}
-
-function addToBasket(e) {
-  let id = e.target.dataset.id;
-  let product = myShowcase.products.find(x => x.id == id);
-  myBasket.addProduct(product);
-  console.log(myBasket.products);
-  myBasket.showBasketContent();
-}
-
-
-
-makeGETRequest(myUrl)
-  .then(showProducts)
-  .then(addListeners);
-
+});
 
